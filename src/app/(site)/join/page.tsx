@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Check } from "@phosphor-icons/react/dist/ssr";
 import { LinkButton } from "@/components/ui/Button";
@@ -17,7 +16,7 @@ export default async function JoinPage() {
   const user = await getCurrentUser();
   if (user?.providerId) redirect("/pro");
   const { t } = await getI18n();
-  const start = user ? "/pro/setup" : "/login?next=/pro/setup";
+  const start = "/pro/setup";
   const needs = [t("join.need1"), t("join.need2"), t("join.need3"), t("join.need4")];
   const how = [t("join.how1"), t("join.how2"), t("join.how3"), t("join.how4")];
 
@@ -32,14 +31,6 @@ export default async function JoinPage() {
             <LinkButton href={start} size="lg" className="w-full sm:w-auto sm:px-10">
               {t("join.cta")}
             </LinkButton>
-            {!user && (
-              <p className="text-small text-ink-2">
-                {t("join.already")}{" "}
-                <Link href="/login?next=/pro" className="font-semibold text-brand underline underline-offset-4">
-                  {t("nav.signIn")}
-                </Link>
-              </p>
-            )}
           </div>
         </div>
         <div className="hidden lg:col-span-5 lg:block">

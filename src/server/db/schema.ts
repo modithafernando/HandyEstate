@@ -30,6 +30,8 @@ export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   phone: text("phone").notNull().unique(), // E.164, e.g. +94771234567
   name: text("name"),
+  /** scrypt hash; null for accounts that only use OTP. */
+  passwordHash: text("password_hash"),
   isAdmin: boolean("is_admin").notNull().default(false),
   createdAt: createdAt(),
   lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { signOut } from "@/app/actions/auth";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { AreaPicker, type TownOption } from "@/components/search/AreaPicker";
 import type { Translate } from "@/lib/i18n/translate";
@@ -34,6 +35,11 @@ export function AppHeader({
           </ul>
         </nav>
         {showArea && <AreaPicker current={area} towns={towns} />}
+        <form action={signOut} className="hidden lg:block">
+          <button type="submit" className="h-11 rounded-md px-3 text-small font-semibold text-ink-2 hover:bg-ink/5 hover:text-ink">
+            {t("nav.signOut")}
+          </button>
+        </form>
       </div>
     </header>
   );

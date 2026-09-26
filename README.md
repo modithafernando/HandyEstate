@@ -26,17 +26,20 @@ npm run dev                     # http://localhost:3000
 
 `npm run db:seed -- --ref` seeds reference data only (use this in production).
 
-### Signing in during development
+### Signing in
 
-SMS isn't sent in development — the 6-digit code is printed in the server log **and shown on
-the sign-in screen**. Seeded accounts:
+The app opens on a login page (phone number + password). **"I need a handyman"** is the default
+tab; **"I'm a handyman"** takes providers straight to their dashboard. Anyone can create an account
+from the same page. Demo accounts (created by `npm run db:seed`):
 
-| Who | Phone |
-|---|---|
-| Admin | `070 000 0000` |
-| Provider "Kasun Electrical" | `070 000 0100` |
-| Other demo providers | `070 000 01NN` (in seed order) |
-| Any new number | becomes a customer, or a provider via `/join` |
+| Account | Phone | Password | Lands on |
+|---|---|---|---|
+| Customer | `070 000 0001` | `customer123` | `/` — search |
+| Handyman (Kasun Electrical) | `070 000 0100` | `handyman123` | `/pro` — Taking work today, stats |
+| Admin | `070 000 0000` | `admin123` | `/admin` |
+
+This password login is a beta stand-in. Phone OTP is already built (`src/server/services/otp.ts`
++ `sms.ts`) for when an SMS gateway is connected.
 
 All demo data is fictional and flagged `is_demo`; demo profiles say so at the bottom.
 

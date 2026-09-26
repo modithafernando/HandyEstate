@@ -15,7 +15,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
   const row = await getProviderBySlug(slug);
   if (!row || row.p.status !== "approved") notFound();
   const user = await getCurrentUser();
-  if (!user) redirect(`/login?intent=review&next=${encodeURIComponent(`/p/${slug}/review`)}`);
+  if (!user) redirect(`/login?next=${encodeURIComponent(`/p/${slug}/review`)}`);
   if (user.providerId === row.p.id) redirect(`/p/${slug}`);
 
   const [{ t }, tags, existing] = await Promise.all([

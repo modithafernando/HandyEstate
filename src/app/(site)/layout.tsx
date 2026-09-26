@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -7,6 +8,8 @@ import { getArea, location } from "@/server/services/location";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const [{ t }, area, towns, user] = await Promise.all([getI18n(), getArea(), location.listTowns(), getCurrentUser()]);
+  // Signed-in only for now (the proxy sends visitors without a session to /login).
+  if (!user) redirect("/login");
   const opts = towns.map(({ slug, name, district }) => ({ slug, name, district }));
   return (
     <>
@@ -15,7 +18,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       </a>
       <AppHeader t={t} area={{ slug: area.slug, name: area.name, district: area.district }} towns={opts} isProvider={!!user?.providerId} />
       <main id="main">{children}</main>
-      <SiteFooter t={t} />
+      <SiteFooter t={t} signedIn />
       <BottomNav isProvider={!!user?.providerId} />
     </>
   );

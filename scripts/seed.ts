@@ -12,6 +12,7 @@ import { CATEGORIES, REVIEW_TAGS, TOWNS } from "../src/server/data/reference";
 import { CUSTOMER_NAMES, PROVIDERS, REVIEW_COMMENTS } from "./seed-data";
 import { slugify } from "../src/lib/slug";
 import { endOfTodayColombo } from "../src/lib/time";
+import { hashPassword } from "../src/lib/password";
 
 const client = postgres(process.env.DATABASE_URL!, { max: 1 });
 const db = drizzle(client, { schema: s, casing: "snake_case" });
@@ -51,8 +52,11 @@ async function seedDemo() {
   const townBySlug = new Map(townRows.map((t) => [t.slug, t]));
   const tags = await db.select().from(s.reviewTags);
 
-  // Admin (dev only)
-  await db.insert(s.users).values({ phone: "+94700000000", name: "Admin (dev)", isAdmin: true });
+  // Demo sign-ins (development only — shown on the login page outside production)
+  await db.insert(s.users).values([
+    { phone: "+94700000000", name: "Admin (dev)", isAdmin: true, passwordHash: hashPassword("admin123") },
+    { phone: "+94700000001", name: "Amaya", passwordHash: hashPassword("customer123") },
+  ]);
 
   // Customers who leave reviews
   const customers = await db
@@ -65,7 +69,8 @@ async function seedDemo() {
 
   for (const [i, p] of PROVIDERS.entries()) {
     const phone = `+947000001${String(i).padStart(2, "0")}`;
-    const [user] = await db.insert(s.users).values({ phone, name: p.name }).returning();
+    // The first provider (Kasun) is the demo handyman account.
+    const [user] = await db.insert(s.users).values({ phone, name: p.name, passwordHash: i === 0 ? hashPassword("handyman123") : null }).returning();
     const town = townBySlug.get(p.town);
     if (!town) throw new Error(`Unknown town ${p.town}`);
     const slugBase = slugify(p.business ?? `${p.name} ${town.name}`);

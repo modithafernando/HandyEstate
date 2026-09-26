@@ -3,12 +3,13 @@ import Link from "next/link";
 import { signOut } from "@/app/actions/auth";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { getI18n } from "@/lib/i18n/server";
-import { requireUser } from "@/server/services/auth";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/server/services/auth";
 
 export const metadata: Metadata = { title: "My work", robots: { index: false } };
 
 export default async function ProLayout({ children }: { children: React.ReactNode }) {
-  await requireUser("/pro");
+  if (!(await getCurrentUser())) redirect("/login?as=handyman&next=/pro");
   const { t } = await getI18n();
   return (
     <>
